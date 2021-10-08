@@ -2,6 +2,7 @@ import sys
 
 import pygame
 
+from letter import Letter
 from settings import Settings
 
 
@@ -17,6 +18,10 @@ class AlphabeticRain:
 
         pygame.display.set_caption("Alphabetical Rain")
 
+        self.letters = pygame.sprite.Group()
+
+        self._create_rain()
+
     def run_game(self):
         """Rozpoczęcie pętli głównej gry"""
 
@@ -24,16 +29,24 @@ class AlphabeticRain:
             self._check_events()
             self._update_screen()
 
+    def _create_rain(self):
+        for i in range(10):
+            letter = Letter(self)
+            self.letters.add(letter)
+
     def _check_events(self):
         """Reakcje na zdarzenia generowane przez użytkownika"""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
 
-
     def _update_screen(self):
         """Uaktualnianie obrazów na ekranie"""
         self.screen.fill(self.settings.bg_color)
+
+        for letter in self.letters.sprites():
+            letter.show_letter()
+
         pygame.display.flip()
 
 
