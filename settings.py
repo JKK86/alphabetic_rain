@@ -7,3 +7,5 @@ class Settings:
         self.bg_color = (0, 0, 255)
 
         self.drop_speed = 1
+
+        self.lives_limit = 3

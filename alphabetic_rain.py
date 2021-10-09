@@ -1,7 +1,9 @@
 import sys
+from time import sleep
 
 import pygame
 
+from game_stats import GameStats
 from letter import Letter
 from settings import Settings
 
@@ -20,6 +22,8 @@ class AlphabeticRain:
 
         pygame.display.set_caption("Alphabetical Rain")
 
+        self.stats = GameStats(self)
+
         self.letters = pygame.sprite.Group()
 
         self._create_rain()
@@ -29,8 +33,10 @@ class AlphabeticRain:
 
         while True:
             self._check_events()
-            self._update_letters()
-            self._update_screen()
+
+            if self.stats.game_active:
+                self._update_letters()
+                self._update_screen()
 
     def _create_rain(self):
         for i in range(10):
@@ -46,16 +52,39 @@ class AlphabeticRain:
                 self._check_keydown_events(event)
 
     def _check_keydown_events(self, event):
+        if event.key == pygame.K_ESCAPE:
+            sys.exit()
+        else:
+            for letter in self.letters.sprites():
+                # print(pygame.key.name(event.key))
+                # print(letter.letter)
+                if pygame.key.name(event.key) == letter.letter:
+                    self.letters.remove(letter)
+                    break
+
+    def _check_letters_bottom(self):
+        """Sprawdzenie czy któraś z opadających liter dotarła do dolnej krawędzi ekranu"""
+        screen_rect = self.screen.get_rect()
         for letter in self.letters.sprites():
-            # print(pygame.key.name(event.key))
-            # print(letter.letter)
-            if pygame.key.name(event.key) == letter.letter:
-                self.letters.remove(letter)
+            if letter.letter_rect.bottom >= screen_rect.bottom:
+                self._lose_life()
                 break
+
+    def _lose_life(self):
+        if self.stats.lives_left >= 0:
+            self.stats.lives_left -= 1
+            self.letters.empty()
+            self._create_rain()
+            sleep(0.5)
+        else:
+            self.stats.game_active = False
 
     def _update_letters(self):
         """Uaktualnienie położenia wszystkich spadających liter"""
         self.letters.update()
+        if not self.letters:
+            self._create_rain()
+        self._check_letters_bottom()
 
     def _update_screen(self):
         """Uaktualnianie obrazów na ekranie"""
@@ -66,7 +95,6 @@ class AlphabeticRain:
 
         pygame.display.flip()
         self.clock.tick(60)
-
 
 
 if __name__ == '__main__':
