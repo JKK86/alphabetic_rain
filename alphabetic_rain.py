@@ -12,6 +12,8 @@ class AlphabeticRain:
     def __init__(self):
         pygame.init()
 
+        self.clock = pygame.time.Clock()
+
         self.settings = Settings()
 
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
@@ -27,6 +29,7 @@ class AlphabeticRain:
 
         while True:
             self._check_events()
+            self._update_letters()
             self._update_screen()
 
     def _create_rain(self):
@@ -39,6 +42,20 @@ class AlphabeticRain:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                self._check_keydown_events(event)
+
+    def _check_keydown_events(self, event):
+        for letter in self.letters.sprites():
+            # print(pygame.key.name(event.key))
+            # print(letter.letter)
+            if pygame.key.name(event.key) == letter.letter:
+                self.letters.remove(letter)
+                break
+
+    def _update_letters(self):
+        """Uaktualnienie położenia wszystkich spadających liter"""
+        self.letters.update()
 
     def _update_screen(self):
         """Uaktualnianie obrazów na ekranie"""
@@ -48,6 +65,8 @@ class AlphabeticRain:
             letter.show_letter()
 
         pygame.display.flip()
+        self.clock.tick(60)
+
 
 
 if __name__ == '__main__':

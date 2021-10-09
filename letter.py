@@ -16,7 +16,7 @@ class Letter(Sprite):
         self.text_color = (255, 255, 255)
         self.font = pygame.font.SysFont(None, 50)
 
-        self.letter = random.choice(string.ascii_letters + string.digits)
+        self.letter = random.choice(string.ascii_letters.lower() + string.digits)
 
         self.prepare_letter()
 
@@ -28,3 +28,6 @@ class Letter(Sprite):
 
     def show_letter(self):
         self.screen.blit(self.letter_image, self.letter_rect)
+
+    def update(self):
+        self.letter_rect.y += self.settings.drop_speed
