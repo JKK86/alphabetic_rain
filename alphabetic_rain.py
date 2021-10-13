@@ -3,6 +3,7 @@ from time import sleep
 
 import pygame
 
+from button import Button
 from game_stats import GameStats
 from letter import Letter
 from settings import Settings
@@ -28,6 +29,8 @@ class AlphabeticRain:
 
         self._create_rain()
 
+        self.play_button = Button(self, "Start")
+
     def run_game(self):
         """Rozpoczęcie pętli głównej gry"""
 
@@ -36,7 +39,8 @@ class AlphabeticRain:
 
             if self.stats.game_active:
                 self._update_letters()
-                self._update_screen()
+
+            self._update_screen()
 
     def _create_rain(self):
         for i in range(self.settings.number_of_letters):
@@ -50,9 +54,14 @@ class AlphabeticRain:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                self._check_play_button(mouse_pos)
 
     def _check_keydown_events(self, event):
-        if event.key == pygame.K_ESCAPE:
+        if event.key == pygame.K_s and not self.stats.game_active:
+            self._start_game()
+        elif event.key == pygame.K_ESCAPE:
             sys.exit()
         else:
             for letter in self.letters.sprites():
@@ -61,6 +70,22 @@ class AlphabeticRain:
                 if pygame.key.name(event.key) == letter.letter:
                     self.letters.remove(letter)
                     break
+
+    def _check_play_button(self, mouse_pos):
+        """Rozpoczęcie nowej gry po kliknięciu przez użytkownika przycisku Start"""
+        button_clicked = self.play_button.rect.collidepoint(mouse_pos)
+        if button_clicked and not self.stats.game_active:
+            self._start_game()
+
+    def _start_game(self):
+        # Wyzerowanie ustawień dotyczących gry
+        self.stats.reset_stats()
+        self.stats.game_active = True
+
+        self.letters.empty()
+        self._create_rain()
+
+        pygame.mouse.set_visible(False)
 
     def _check_letters_bottom(self):
         """Sprawdzenie czy któraś z opadających liter dotarła do dolnej krawędzi ekranu"""
@@ -78,6 +103,7 @@ class AlphabeticRain:
             sleep(0.5)
         else:
             self.stats.game_active = False
+            pygame.mouse.set_visible(True)
 
     def _update_letters(self):
         """Uaktualnienie położenia wszystkich spadających liter"""
@@ -92,6 +118,9 @@ class AlphabeticRain:
 
         for letter in self.letters.sprites():
             letter.show_letter()
+
+        if not self.stats.game_active:
+            self.play_button.draw_button()
 
         pygame.display.flip()
         self.clock.tick(60)
