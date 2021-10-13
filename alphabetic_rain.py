@@ -80,6 +80,7 @@ class AlphabeticRain:
     def _start_game(self):
         # Wyzerowanie ustawień dotyczących gry
         self.stats.reset_stats()
+        self.settings.initialize_dynamic_settings()
         self.stats.game_active = True
 
         self.letters.empty()
@@ -110,6 +111,7 @@ class AlphabeticRain:
         self.letters.update()
         if not self.letters:
             self._create_rain()
+            self.settings.increase_difficulty()
         self._check_letters_bottom()
 
     def _update_screen(self):
@@ -127,6 +129,6 @@ class AlphabeticRain:
 
 
 if __name__ == '__main__':
-    # Utworzenie egemplarza gry i jej uruchomienie
+    # Utworzenie egzemplarza gry i jej uruchomienie
     ar = AlphabeticRain()
     ar.run_game()
