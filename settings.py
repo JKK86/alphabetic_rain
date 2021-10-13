@@ -6,6 +6,10 @@ class Settings:
         self.screen_height = 800
         self.bg_color = (0, 0, 255)
 
+        # Ustawienia deszczu
+
         self.drop_speed = 1
+        self.number_of_letters = 20
+        self.letter_density = -500
 
         self.lives_limit = 3

@@ -39,7 +39,7 @@ class AlphabeticRain:
                 self._update_screen()
 
     def _create_rain(self):
-        for i in range(10):
+        for i in range(self.settings.number_of_letters):
             letter = Letter(self)
             self.letters.add(letter)
 

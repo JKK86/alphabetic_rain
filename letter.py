@@ -24,7 +24,7 @@ class Letter(Sprite):
         self.letter_image = self.font.render(self.letter, True, self.text_color, self.settings.bg_color)
         self.letter_rect = self.letter_image.get_rect()
         self.letter_rect.x = random.randint(0, self.settings.screen_width)
-        self.letter_rect.top = self.screen_rect.top
+        self.letter_rect.y = random.randint(self.settings.letter_density, 0)
 
     def show_letter(self):
         self.screen.blit(self.letter_image, self.letter_rect)
