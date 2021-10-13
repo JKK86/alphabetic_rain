@@ -6,6 +6,7 @@ import pygame
 from button import Button
 from game_stats import GameStats
 from letter import Letter
+from scoreboard import Scoreboard
 from settings import Settings
 
 
@@ -24,6 +25,8 @@ class AlphabeticRain:
         pygame.display.set_caption("Alphabetical Rain")
 
         self.stats = GameStats(self)
+
+        self.scoreboard = Scoreboard(self)
 
         self.letters = pygame.sprite.Group()
 
@@ -69,6 +72,9 @@ class AlphabeticRain:
                 # print(letter.letter)
                 if pygame.key.name(event.key) == letter.letter:
                     self.letters.remove(letter)
+                    self.stats.score += self.settings.letter_points
+                    self.scoreboard.prep_score()
+                    self.scoreboard.check_high_score()
                     break
 
     def _check_play_button(self, mouse_pos):
@@ -82,6 +88,9 @@ class AlphabeticRain:
         self.stats.reset_stats()
         self.settings.initialize_dynamic_settings()
         self.stats.game_active = True
+        self.scoreboard.prep_score()
+        self.scoreboard.prep_level()
+        self.scoreboard.prep_lives()
 
         self.letters.empty()
         self._create_rain()
@@ -99,6 +108,7 @@ class AlphabeticRain:
     def _lose_life(self):
         if self.stats.lives_left >= 0:
             self.stats.lives_left -= 1
+            self.scoreboard.prep_lives()
             self.letters.empty()
             self._create_rain()
             sleep(0.5)
@@ -112,6 +122,8 @@ class AlphabeticRain:
         if not self.letters:
             self._create_rain()
             self.settings.increase_difficulty()
+            self.stats.level += 1
+            self.scoreboard.prep_level()
         self._check_letters_bottom()
 
     def _update_screen(self):
@@ -120,6 +132,8 @@ class AlphabeticRain:
 
         for letter in self.letters.sprites():
             letter.show_letter()
+
+        self.scoreboard.show_score()
 
         if not self.stats.game_active:
             self.play_button.draw_button()

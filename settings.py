@@ -11,6 +11,7 @@ class Settings:
         self.speedup_scale = 1.1
         self.increase_scale = 1.2
         self.dispersion_reduce = 50
+        self.score_scale = 1.5
 
         self.initialize_dynamic_settings()
 
@@ -20,9 +21,11 @@ class Settings:
         self.drop_speed = 1
         self.number_of_letters = 20
         self.letter_dispersion = -1000
+        self.letter_points = 50
 
     def increase_difficulty(self):
         """Zmiana ustawień dotyczących trudności"""
         self.drop_speed *= self.speedup_scale
         self.number_of_letters = int(self.number_of_letters * self.increase_scale)
         self.letter_dispersion = min(int(self.letter_dispersion + self.dispersion_reduce), 0)
+        self.letter_points = int(self.letter_points * self.score_scale)
